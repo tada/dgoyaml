@@ -1,4 +1,4 @@
-# dgopcore (Transform Dgo to Pcore and back)
+# dgoyaml Dgo YAML bi-directional serialization
 
 [![](https://goreportcard.com/badge/github.com/lyraproj/dgoyaml)](https://goreportcard.com/report/github.com/lyraproj/dgoyaml)
 [![](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/lyraproj/dgoyaml)
