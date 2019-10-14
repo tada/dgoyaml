@@ -89,12 +89,12 @@ func validate(t *testing.T, params dgo.Value) []error {
 	return pt.Validate(nil, params)
 }
 
-func loadDesc(yamlData []byte) (dgo.StructType, error) {
+func loadDesc(yamlData []byte) (dgo.StructMapType, error) {
 	data, err := yaml.Unmarshal(yamlData)
 	if err != nil {
 		return nil, err
 	}
-	return newtype.StructFromMap(false, data.(dgo.Map)), nil
+	return newtype.StructMapFromMap(false, data.(dgo.Map)), nil
 }
 
 func expectError(t *testing.T, error string, errors []error) {

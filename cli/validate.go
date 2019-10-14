@@ -79,7 +79,7 @@ func (h *validateCommand) run(input, spec string) int {
 		panic(fmt.Errorf(`invalid file name '%s', expected file name to end with .yaml or .json`, input))
 	}
 
-	var sType dgo.StructType
+	var sType dgo.StructMapType
 	switch {
 	case strings.HasSuffix(spec, `.yaml`), strings.HasSuffix(spec, `.json`):
 		m, err := yaml.Unmarshal(read(spec))
@@ -90,10 +90,10 @@ func (h *validateCommand) run(input, spec string) int {
 		if !ok {
 			panic(errors.New(`expecting data to be a map`))
 		}
-		sType = newtype.StructFromMap(false, vMap)
+		sType = newtype.StructMapFromMap(false, vMap)
 	case strings.HasSuffix(spec, `.dgo`):
 		tp := newtype.ParseFile(nil, spec, string(read(spec)))
-		if st, ok := tp.(dgo.StructType); ok {
+		if st, ok := tp.(dgo.StructMapType); ok {
 			sType = st
 		} else {
 			panic(fmt.Errorf(`file '%s' does not contain a struct definition`, spec))
