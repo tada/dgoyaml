@@ -193,6 +193,15 @@ func TestDgo_validate_spec_not_map(t *testing.T) {
 	require.Match(t, `Error: expecting data to be a map`, s)
 }
 
+func TestDgo_validate_spec_bad_yaml(t *testing.T) {
+	out := &strings.Builder{}
+	err := &strings.Builder{}
+	dgo := cli.Dgo(out, err)
+	require.Equal(t, 1, dgo.Do([]string{`--verbose`, `validate`, `--input`, `testdata/service.yaml`, `--spec`, `testdata/bad.yaml`}))
+	s := err.String()
+	require.Match(t, `did not find expected key`, s)
+}
+
 func TestDgo_validate_spec_bad_type(t *testing.T) {
 	out := &strings.Builder{}
 	err := &strings.Builder{}
@@ -220,11 +229,20 @@ func TestDgo_validate_spec_extension(t *testing.T) {
 	require.Match(t, `expected file name to end with \.yaml, \.json, or \.dgo`, s)
 }
 
-func TestDgo_validate_bad_dgo(t *testing.T) {
+func TestDgo_validate_spec_bad_dgo(t *testing.T) {
 	out := &strings.Builder{}
 	err := &strings.Builder{}
 	dgo := cli.Dgo(out, err)
 	require.Equal(t, 1, dgo.Do([]string{`--verbose`, `validate`, `--input`, `testdata/service.yaml`, `--spec`, `testdata/servicespec_bad.dgo`}))
 	s := err.String()
 	require.Match(t, `Error: mix of elements and map entries`, s)
+}
+
+func TestDgo_validate_bad_yaml(t *testing.T) {
+	out := &strings.Builder{}
+	err := &strings.Builder{}
+	dgo := cli.Dgo(out, err)
+	require.Equal(t, 1, dgo.Do([]string{`--verbose`, `validate`, `--input`, `testdata/bad.yaml`, `--spec`, `testdata/servicespec.go`}))
+	s := err.String()
+	require.Match(t, `did not find expected key`, s)
 }
