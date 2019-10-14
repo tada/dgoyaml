@@ -1,3 +1,4 @@
+// Package yaml contains the Marshal and Unmarshal functions
 package yaml
 
 import (
