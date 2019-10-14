@@ -5,6 +5,6 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20190905181640-827449938966
 )
 
-replace github.com/lyraproj/dgo => ../dgo
+replace github.com/lyraproj/dgo => github.com/thallgren/dgo v0.0.0-20191014054153-2490179d6db8
 
 go 1.13
