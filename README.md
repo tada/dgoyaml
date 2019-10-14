@@ -43,9 +43,10 @@ port:
   type: 1..999
   name: sample/service_port
 ```
-The value of each `type` is a [dgo type](docs/types.md). They limit the host parameter to a non empty string
-and the port parameter to an integer in the range 1-999. A special `required` entry is used to denote whether
-or not a parameter value must be present. The `name` entry is optional and provides a freeform text identifier.
+The value of each `type` is a [dgo type](https://github.com/lyraproj/dgo/docs/types.md). They limit the host parameter
+to a non empty string and the port parameter to an integer in the range 1-999. A special `required` entry is used to
+denote whether or not a parameter value must be present. The `name` entry is optional and provides a freeform text
+identifier.
 
 Put the two above YAML examples in two separate files, `params.yaml` and `params_spec.yaml`. Then run the
 command:
