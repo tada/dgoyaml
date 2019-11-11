@@ -93,7 +93,7 @@ func decodeArray(n *y3.Node) dgo.Array {
 	for i, me := range ms {
 		es[i] = decodeValue(me)
 	}
-	return vf.MutableArray(nil, es)
+	return vf.WrapSlice(es)
 }
 
 func decodeMap(n *y3.Node) dgo.Map {

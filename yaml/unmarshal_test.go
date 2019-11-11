@@ -24,7 +24,7 @@ func ExampleUnmarshal() {
 	if err == nil {
 		fmt.Println(v)
 	}
-	// Output: ["hello",true,1,3.14,null,{"a":1}]
+	// Output: {"hello",true,1,3.14,nil,{"a":1}}
 }
 
 func TestUnmarshal_map(t *testing.T) {

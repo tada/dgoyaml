@@ -155,40 +155,40 @@ func (o obscureValue) HashCode() int {
 }
 
 func TestMarshal_native(t *testing.T) {
-	m := vf.MutableValues(nil, &testMarshaler{A: `hello`})
+	m := vf.MutableValues(&testMarshaler{A: `hello`})
 	bs, err := yaml.Marshal(m)
 	require.Ok(t, err)
 	require.Equal(t, "- A: hello\n", string(bs))
 }
 
 func TestMarshal_native_node(t *testing.T) {
-	m := vf.MutableValues(nil, &marshalTestNode{})
+	m := vf.MutableValues(&marshalTestNode{})
 	bs, err := yaml.Marshal(m)
 	require.Ok(t, err)
 	require.Equal(t, "- 23\n", string(bs))
 }
 
 func TestMarshal_obscure(t *testing.T) {
-	m := vf.MutableValues(nil, obscureValue(0))
+	m := vf.MutableValues(obscureValue(0))
 	_, err := yaml.Marshal(m)
 	require.NotNil(t, err)
 	require.Equal(t, `unable to marshal into value of type any`, err.Error())
 }
 
 func TestMarshal_fail(t *testing.T) {
-	m := vf.MutableValues(nil, &marshalTestFail{})
+	m := vf.MutableValues(&marshalTestFail{})
 	_, err := yaml.Marshal(m)
 	require.NotNil(t, err)
 	require.Equal(t, `errFailing`, err.Error())
 }
 
 func TestMarshal_panic(t *testing.T) {
-	m := vf.MutableValues(nil, &marshalTestPanic{})
+	m := vf.MutableValues(&marshalTestPanic{})
 	require.Panic(t, func() { _, _ = yaml.Marshal(m) }, `errFailing`)
 }
 
 func TestMarshal_failNoMarshaler(t *testing.T) {
-	m := vf.MutableValues(nil, &testNoMarshaler{})
+	m := vf.MutableValues(&testNoMarshaler{})
 	_, err := yaml.Marshal(m)
 	require.NotNil(t, err)
 	require.Equal(t, `unable to marshal into value of type *yaml_test.testNoMarshaler`, err.Error())
