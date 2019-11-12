@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/lyraproj/dgo/dgo"
-
 	require "github.com/lyraproj/dgo/dgo_test"
 	"github.com/lyraproj/dgo/typ"
 	"github.com/lyraproj/dgo/vf"

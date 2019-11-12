@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/lyraproj/dgo/dgo"
-	"github.com/lyraproj/dgo/newtype"
+	"github.com/lyraproj/dgo/tf"
 	"github.com/lyraproj/dgo/util"
 	"github.com/lyraproj/dgoyaml/yaml"
 )
@@ -90,9 +90,9 @@ func (h *validateCommand) run(input, spec string) int {
 		if !ok {
 			panic(errors.New(`expecting data to be a map`))
 		}
-		sType = newtype.StructMapFromMap(false, vMap)
+		sType = tf.StructMapFromMap(false, vMap)
 	case strings.HasSuffix(spec, `.dgo`):
-		tp := newtype.ParseFile(nil, spec, string(read(spec)))
+		tp := tf.ParseFile(nil, spec, string(read(spec)))
 		if st, ok := tp.(dgo.StructMapType); ok {
 			sType = st
 		} else {
