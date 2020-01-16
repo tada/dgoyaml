@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/lyraproj/dgo/dgo"
-	"github.com/lyraproj/dgo/newtype"
+	"github.com/lyraproj/dgo/tf"
 	"github.com/lyraproj/dgo/vf"
 	y3 "gopkg.in/yaml.v3"
 )
@@ -61,7 +61,7 @@ func decodeScalar(n *y3.Node) dgo.Value {
 	case `!!binary`:
 		v = vf.BinaryFromString(n.Value)
 	case `!puppet.com,2019:dgo/type`:
-		v = newtype.Parse(n.Value)
+		v = tf.Parse(n.Value)
 	default:
 		var x interface{}
 		if err := n.Decode(&x); err != nil {
@@ -93,7 +93,7 @@ func decodeArray(n *y3.Node) dgo.Array {
 	for i, me := range ms {
 		es[i] = decodeValue(me)
 	}
-	return vf.MutableArray(nil, es)
+	return vf.WrapSlice(es)
 }
 
 func decodeMap(n *y3.Node) dgo.Map {

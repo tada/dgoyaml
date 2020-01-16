@@ -3,10 +3,9 @@ package examples
 import (
 	"testing"
 
-	"github.com/lyraproj/dgoyaml/yaml"
-
 	"github.com/lyraproj/dgo/dgo"
-	"github.com/lyraproj/dgo/newtype"
+	"github.com/lyraproj/dgo/tf"
+	"github.com/lyraproj/dgoyaml/yaml"
 )
 
 // Sample parameter map
@@ -94,7 +93,7 @@ func loadDesc(yamlData []byte) (dgo.StructMapType, error) {
 	if err != nil {
 		return nil, err
 	}
-	return newtype.StructMapFromMap(false, data.(dgo.Map)), nil
+	return tf.StructMapFromMap(false, data.(dgo.Map)), nil
 }
 
 func expectError(t *testing.T, error string, errors []error) {

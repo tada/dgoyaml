@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/lyraproj/dgo/dgo"
-	"github.com/lyraproj/dgo/newtype"
+	"github.com/lyraproj/dgo/tf"
 	"github.com/lyraproj/dgo/util"
 	"github.com/lyraproj/dgoyaml/yaml"
 )
@@ -43,21 +43,43 @@ type validateCommand struct {
 	command
 }
 
-func (h *validateCommand) run(input, spec string) int {
-	// read function that succeed or panics
-	read := func(name string) []byte {
-		/* #nosec */
-		bs, err := ioutil.ReadFile(name)
-		if err != nil {
-			panic(err)
-		}
-		return bs
+func readFileOrPanic(name string) []byte {
+	/* #nosec */
+	bs, err := ioutil.ReadFile(name)
+	if err != nil {
+		panic(err)
 	}
+	return bs
+}
 
-	var iMap dgo.Map
+func (h *validateCommand) run(input, spec string) int {
+	iMap := h.loadParameters(input)
+	sType := h.loadStructMapType(spec)
+	ok := true
+	if h.verbose {
+		bld := util.NewIndenter(`  `)
+		ok = sType.ValidateVerbose(iMap, bld)
+		util.WriteString(h.out, bld.String())
+	} else {
+		vs := sType.Validate(nil, iMap)
+		if len(vs) > 0 {
+			ok = false
+			for _, err := range vs {
+				util.WriteString(h.out, err.Error())
+				util.WriteRune(h.out, '\n')
+			}
+		}
+	}
+	if ok {
+		return 0
+	}
+	return 1
+}
+
+func (h *validateCommand) loadParameters(input string) (iMap dgo.Map) {
 	switch {
 	case strings.HasSuffix(input, `.yaml`), strings.HasSuffix(input, `.json`):
-		data := read(input)
+		data := readFileOrPanic(input)
 		m, err := yaml.Unmarshal(data)
 		if err != nil {
 			panic(err)
@@ -78,11 +100,13 @@ func (h *validateCommand) run(input, spec string) int {
 	default:
 		panic(fmt.Errorf(`invalid file name '%s', expected file name to end with .yaml or .json`, input))
 	}
+	return
+}
 
-	var sType dgo.StructMapType
+func (h *validateCommand) loadStructMapType(spec string) (sType dgo.StructMapType) {
 	switch {
 	case strings.HasSuffix(spec, `.yaml`), strings.HasSuffix(spec, `.json`):
-		m, err := yaml.Unmarshal(read(spec))
+		m, err := yaml.Unmarshal(readFileOrPanic(spec))
 		if err != nil {
 			panic(err)
 		}
@@ -90,37 +114,18 @@ func (h *validateCommand) run(input, spec string) int {
 		if !ok {
 			panic(errors.New(`expecting data to be a map`))
 		}
-		sType = newtype.StructMapFromMap(false, vMap)
+		sType = tf.StructMapFromMap(false, vMap)
 	case strings.HasSuffix(spec, `.dgo`):
-		tp := newtype.ParseFile(nil, spec, string(read(spec)))
+		tp := tf.ParseFile(nil, spec, string(readFileOrPanic(spec)))
 		if st, ok := tp.(dgo.StructMapType); ok {
 			sType = st
 		} else {
 			panic(fmt.Errorf(`file '%s' does not contain a struct definition`, spec))
 		}
 	default:
-		panic(fmt.Errorf(`invalid file name '%s', expected file name to end with .yaml, .json, or .dgo`, input))
+		panic(fmt.Errorf(`invalid file name '%s', expected file name to end with .yaml, .json, or .dgo`, spec))
 	}
-
-	ok := true
-	if h.verbose {
-		bld := util.NewIndenter(`  `)
-		ok = sType.ValidateVerbose(iMap, bld)
-		util.WriteString(h.out, bld.String())
-	} else {
-		vs := sType.Validate(nil, iMap)
-		if len(vs) > 0 {
-			ok = false
-			for _, err := range vs {
-				util.WriteString(h.out, err.Error())
-				util.WriteRune(h.out, '\n')
-			}
-		}
-	}
-	if ok {
-		return 0
-	}
-	return 1
+	return
 }
 
 // Do parses the validate command line options and runs the validation
