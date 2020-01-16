@@ -1,7 +1,7 @@
 module github.com/lyraproj/dgoyaml
 
 require (
-	github.com/lyraproj/dgo v0.3.1
+	github.com/lyraproj/dgo v0.3.2
 	gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
 )
 
