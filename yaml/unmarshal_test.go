@@ -5,7 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lyraproj/dgo/dgo"
+	"github.com/lyraproj/dgo/tf"
+
 	require "github.com/lyraproj/dgo/dgo_test"
 	"github.com/lyraproj/dgo/typ"
 	"github.com/lyraproj/dgo/vf"
@@ -75,13 +76,12 @@ int: 23
 float: 3.14`))
 	require.Ok(t, err)
 
-	require.Panic(t, func() {
-		m, err := yaml.Unmarshal([]byte(`
+	m, err := yaml.Unmarshal([]byte(`
 int: 23
 string: hello`))
-		require.Ok(t, err)
-		m.(dgo.Map).SetType(`map[string](int|float)`)
-	}, `the string "hello" cannot be assigned to a variable of type int|float`)
+	require.Ok(t, err)
+	require.Instance(t, tf.ParseType(`map[string](int|string)`), m)
+	require.NotInstance(t, tf.ParseType(`map[string](int|float)`), m)
 }
 
 func TestUnmarshal_array(t *testing.T) {

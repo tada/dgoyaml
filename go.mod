@@ -1,8 +1,8 @@
 module github.com/lyraproj/dgoyaml
 
 require (
-	github.com/lyraproj/dgo v0.3.2
-	gopkg.in/yaml.v3 v3.0.0-20191120175047-4206685974f2
+	github.com/lyraproj/dgo v0.4.0-alpha
+	gopkg.in/yaml.v3 v3.0.0-20200121175148-a6ecf24a6d71
 )
 
 go 1.13
