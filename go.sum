@@ -1,5 +1,5 @@
-github.com/lyraproj/dgo v0.4.1 h1:MZautCIx+vLs/36YGuvqRlVnyhm/cpBRj/GYvwfBDGQ=
-github.com/lyraproj/dgo v0.4.1/go.mod h1:O9r/qo0ktKMaYLVBAKModbBKAMCVZFhrkMClfmxdqB0=
+github.com/lyraproj/dgo v0.4.2 h1:QBZpW+8gmwrBtQt5KcUhjUbCpkTOugTNgSoBhMexHh4=
+github.com/lyraproj/dgo v0.4.2/go.mod h1:O9r/qo0ktKMaYLVBAKModbBKAMCVZFhrkMClfmxdqB0=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.0-20200121175148-a6ecf24a6d71 h1:Xe2gvTZUJpsvOWUnvmL/tmhVBZUmHSvLbMjRj6NUUKo=
