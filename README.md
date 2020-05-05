@@ -1,16 +1,16 @@
 # dgoyaml Dgo YAML bi-directional serialization
 
-[![](https://goreportcard.com/badge/github.com/lyraproj/dgoyaml)](https://goreportcard.com/report/github.com/lyraproj/dgoyaml)
-[![](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/lyraproj/dgoyaml)
-[![](https://github.com/lyraproj/dgoyaml/workflows/Dgo%20YAML%20Build/badge.svg)](https://github.com/lyraproj/dgoyaml/actions)
+[![](https://goreportcard.com/badge/github.com/tada/dgoyaml)](https://goreportcard.com/report/github.com/tada/dgoyaml)
+[![](https://img.shields.io/badge/godoc-reference-blue.svg)](https://godoc.org/github.com/tada/dgoyaml)
+[![](https://github.com/tada/dgoyaml/workflows/Dgo%20YAML%20Build/badge.svg)](https://github.com/tada/dgoyaml/actions)
 
-This module provides YAML serialization/deserialization for [Dgo](https://github.com/lyraproj/dgo) using the
+This module provides YAML serialization/deserialization for [Dgo](https://github.com/tada/dgo) using the
 [gopkg.in/yaml.v3](https://github.com/go-yaml/yaml/tree/v3) module.
 
 ### Using dgoyaml as a library
 To use dgoyaml, first install the latest version of the library:
 ```sh
-go get github.com/lyraproj/dgoyaml
+go get github.com/tada/dgoyaml
 ```
 
 ### Running the dgo CLI
@@ -18,7 +18,7 @@ The dgo CLI command can be used to get acquainted with dgo concepts. It will all
 types and values in YAML files and then use the types to validate the values. You install the
 command under $GOPATH/bin with:
 ```sh
-go install github.com/lyraproj/dgoyaml/cli/dgo
+go install github.com/tada/dgoyaml/cli/dgo
 ```
 after that, you should be able to do:
 ```sh
@@ -43,7 +43,7 @@ port:
   type: 1..999
   name: sample/service_port
 ```
-The value of each `type` is a [dgo type](https://github.com/lyraproj/dgo/blob/master/docs/types.md). They limit the host
+The value of each `type` is a [dgo type](https://github.com/tada/dgo/blob/master/docs/types.md). They limit the host
 parameter to a non empty string and the port parameter to an integer in the range 1-999. A special `required` entry is
 used to denote whether or not a parameter value must be present. The `name` entry is optional and provides a freeform
 text identifier.

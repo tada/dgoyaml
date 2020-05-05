@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lyraproj/dgo/dgo"
-	"github.com/lyraproj/dgo/vf"
+	"github.com/tada/dgo/dgo"
+	"github.com/tada/dgo/vf"
 	y3 "gopkg.in/yaml.v3"
 )
 
@@ -66,7 +66,7 @@ func encodeArray(v dgo.Array) *y3.Node {
 }
 
 func encodeBinary(v dgo.Binary) *y3.Node {
-	return &y3.Node{Kind: y3.ScalarNode, Tag: `!!binary`, Value: v.String()}
+	return &y3.Node{Kind: y3.ScalarNode, Tag: `!!binary`, Value: v.Encode()}
 }
 
 func encodeBoolean(v dgo.Boolean) *y3.Node {

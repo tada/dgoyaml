@@ -3,7 +3,7 @@ package yaml
 import (
 	"testing"
 
-	require "github.com/lyraproj/dgo/dgo_test"
+	"github.com/tada/dgo/test/require"
 	"gopkg.in/yaml.v3"
 )
 

@@ -4,7 +4,7 @@ package main
 import (
 	"os"
 
-	"github.com/lyraproj/dgoyaml/cli"
+	"github.com/tada/dgoyaml/cli"
 )
 
 func main() {

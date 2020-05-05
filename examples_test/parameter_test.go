@@ -3,9 +3,9 @@ package examples
 import (
 	"testing"
 
-	"github.com/lyraproj/dgo/dgo"
-	"github.com/lyraproj/dgo/tf"
-	"github.com/lyraproj/dgoyaml/yaml"
+	"github.com/tada/dgo/dgo"
+	"github.com/tada/dgo/tf"
+	"github.com/tada/dgoyaml/yaml"
 )
 
 // Sample parameter map
@@ -85,7 +85,7 @@ func validate(t *testing.T, params dgo.Value) []error {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return pt.Validate(nil, params)
+	return pt.(dgo.MapValidation).Validate(nil, params)
 }
 
 func loadDesc(yamlData []byte) (dgo.StructMapType, error) {

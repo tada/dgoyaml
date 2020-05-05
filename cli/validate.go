@@ -1,72 +1,63 @@
 package cli
 
 import (
-	"errors"
-	"fmt"
-	"io"
+	"flag"
 	"io/ioutil"
+	"os"
 	"strings"
 
-	"github.com/lyraproj/dgo/dgo"
-	"github.com/lyraproj/dgo/tf"
-	"github.com/lyraproj/dgo/util"
-	"github.com/lyraproj/dgoyaml/yaml"
+	"github.com/tada/catch"
+	"github.com/tada/catch/pio"
+	"github.com/tada/dgo/dgo"
+	"github.com/tada/dgo/tf"
+	"github.com/tada/dgo/util"
+	"github.com/tada/dgoyaml/yaml"
 )
-
-// Help prints the validate command help on stdout
-func (h *validateCommand) Help() int {
-	util.WriteString(h.out, `validate input against the dgo type system
-
-Usage:
-  dgo validate [flags]
-
-Aliases:
-  v, val, valid
-
-Flags:
-  -i, --input  Relative or absolute path to a yaml file containing input to validate
-  -s, --spec   Relative or absolute path to a yaml or dgo file with the parameter definitions
-
-Global Flags:
-  -v, --verbose   Be verbose in output
-`)
-	return 0
-}
 
 // Validate is the Dgo sub command that reads and validates YAML input using a spec written in
 // YAML or Dgo
-func Validate(out, err io.Writer, debug bool) Command {
-	return &validateCommand{command{`dgo validate`, out, err, debug}}
+func Validate(parent Command) Command {
+	vc := &validateCommand{command: command{parent: parent, out: parent.Out(), err: parent.Err(), verbose: parent.Verbose()}}
+	flags := flag.NewFlagSet(`validate`, flag.ContinueOnError)
+	flags.StringVar(&vc.input, `input`, ``, `yaml file containing input to validate`)
+	flags.StringVar(&vc.spec, `spec`, ``, `yaml or dgo file with the parameter definitions`)
+	vc.flags = flags
+	return vc
 }
 
 type validateCommand struct {
 	command
+	input string
+	spec  string
 }
 
 func readFileOrPanic(name string) []byte {
 	/* #nosec */
 	bs, err := ioutil.ReadFile(name)
 	if err != nil {
+		if os.IsNotExist(err) {
+			err = catch.Error(err)
+		}
 		panic(err)
 	}
 	return bs
 }
 
-func (h *validateCommand) run(input, spec string) int {
-	iMap := h.loadParameters(input)
-	sType := h.loadStructMapType(spec)
+func (h *validateCommand) run() int {
+	iMap := h.loadParameters(h.input)
+	sType := h.loadStructMapType(h.spec)
 	ok := true
 	if h.verbose {
 		bld := util.NewIndenter(`  `)
-		ok = sType.ValidateVerbose(iMap, bld)
-		util.WriteString(h.out, bld.String())
+		ok = sType.(dgo.MapValidation).ValidateVerbose(iMap, bld)
+		pio.WriteString(h.out, bld.String())
 	} else {
-		vs := sType.Validate(nil, iMap)
+		vs := sType.(dgo.MapValidation).Validate(nil, iMap)
 		if len(vs) > 0 {
 			ok = false
 			for _, err := range vs {
-				util.WriteString(h.out, err.Error())
-				util.WriteRune(h.out, '\n')
+				pio.WriteString(h.out, err.Error())
+				pio.WriteRune(h.out, '\n')
 			}
 		}
 	}
@@ -82,12 +73,12 @@ func (h *validateCommand) loadParameters(input string) (iMap dgo.Map) {
 		data := readFileOrPanic(input)
 		m, err := yaml.Unmarshal(data)
 		if err != nil {
-			panic(err)
+			panic(catch.Error(err))
 		}
 		var ok bool
 		iMap, ok = m.(dgo.Map)
 		if !ok {
-			panic(errors.New(`expecting data to be a map`))
+			panic(catch.Error(`expecting data to be a map`))
 		}
 		if h.verbose {
 			bld := util.NewIndenter(`  `)
@@ -95,10 +86,10 @@ func (h *validateCommand) loadParameters(input string) (iMap dgo.Map) {
 			b2 := bld.Indent()
 			b2.NewLine()
 			b2.AppendIndented(string(data))
-			util.WriteString(h.out, bld.String())
+			pio.WriteString(h.out, bld.String())
 		}
 	default:
-		panic(fmt.Errorf(`invalid file name '%s', expected file name to end with .yaml or .json`, input))
+		panic(catch.Error(`invalid file name '%s', expected file name to end with .yaml or .json`, input))
 	}
 	return
 }
@@ -108,11 +99,11 @@ func (h *validateCommand) loadStructMapType(spec string) (sType dgo.StructMapTyp
 	case strings.HasSuffix(spec, `.yaml`), strings.HasSuffix(spec, `.json`):
 		m, err := yaml.Unmarshal(readFileOrPanic(spec))
 		if err != nil {
-			panic(err)
+			panic(catch.Error(err))
 		}
 		vMap, ok := m.(dgo.Map)
 		if !ok {
-			panic(errors.New(`expecting data to be a map`))
+			panic(catch.Error(`expecting data to be a map`))
 		}
 		sType = tf.StructMapFromMap(false, vMap)
 	case strings.HasSuffix(spec, `.dgo`):
@@ -120,53 +111,27 @@ func (h *validateCommand) loadStructMapType(spec string) (sType dgo.StructMapTyp
 		if st, ok := tp.(dgo.StructMapType); ok {
 			sType = st
 		} else {
-			panic(fmt.Errorf(`file '%s' does not contain a struct definition`, spec))
+			panic(catch.Error(`file '%s' does not contain a struct definition`, spec))
 		}
 	default:
-		panic(fmt.Errorf(`invalid file name '%s', expected file name to end with .yaml, .json, or .dgo`, spec))
+		panic(catch.Error(`invalid file name '%s', expected file name to end with .yaml, .json, or .dgo`, spec))
 	}
 	return
 }
 
 // Do parses the validate command line options and runs the validation
 func (h *validateCommand) Do(args []string) int {
-	if len(args) == 0 {
-		return h.MissingOption(`--input`)
-	}
-
-	input := ``
-	spec := ``
-	for len(args) > 0 {
-		opt := args[0]
-		args = args[1:]
-		switch opt {
-		case `help`, `-?`, `--help`, `-help`:
-			return h.Help()
-		case `-i`, `--input`:
-			if len(args) == 0 {
-				return h.MissingOptionArgument(opt)
-			}
-			input = args[0]
-			args = args[1:]
-		case `-s`, `--spec`:
-			if len(args) == 0 {
-				return h.MissingOptionArgument(opt)
-			}
-			spec = args[0]
-			args = args[1:]
-		case `-v`, `--verbose`:
-			h.verbose = true
-		default:
-			return h.UnknownOption(opt)
-		}
-	}
-	if input == `` {
-		return h.MissingOption(`--input`)
-	}
-	if spec == `` {
-		return h.MissingOption(`--spec`)
-	}
 	return h.RunWithCatch(func() int {
-		return h.run(input, spec)
+		r, done := h.Parse(args)
+		if done {
+			return r
+		}
+		if h.input == `` {
+			return h.MissingOption(`input`)
+		}
+		if h.spec == `` {
+			return h.MissingOption(`spec`)
+		}
+		return h.run()
 	})
 }

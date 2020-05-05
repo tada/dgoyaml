@@ -3,9 +3,9 @@ package yaml
 import (
 	"time"
 
-	"github.com/lyraproj/dgo/dgo"
-	"github.com/lyraproj/dgo/tf"
-	"github.com/lyraproj/dgo/vf"
+	"github.com/tada/dgo/dgo"
+	"github.com/tada/dgo/tf"
+	"github.com/tada/dgo/vf"
 	y3 "gopkg.in/yaml.v3"
 )
 

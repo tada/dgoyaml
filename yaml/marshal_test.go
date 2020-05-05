@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lyraproj/dgo/dgo"
-	require "github.com/lyraproj/dgo/dgo_test"
-	"github.com/lyraproj/dgo/typ"
-	"github.com/lyraproj/dgo/vf"
-	"github.com/lyraproj/dgoyaml/yaml"
+	"github.com/tada/dgo/dgo"
+	"github.com/tada/dgo/test/require"
+	"github.com/tada/dgo/typ"
+	"github.com/tada/dgo/vf"
+	"github.com/tada/dgoyaml/yaml"
 	y3 "gopkg.in/yaml.v3"
 )
 
@@ -50,7 +50,7 @@ func TestMarshal_structMap(t *testing.T) {
 	s := structA{A: `Alpha`, B: 32}
 	m := vf.Map(&s)
 	j, err := yaml.Marshal(m)
-	require.Ok(t, err)
+	require.NoError(t, err)
 	require.Equal(t, `a: Alpha
 b: 32
 `, string(j))
@@ -58,14 +58,14 @@ b: 32
 	s2 := structAyaml{A: `Alpha`, B: 32}
 	m = vf.Map(&s2)
 	j, err = yaml.Marshal(m)
-	require.Ok(t, err)
+	require.NoError(t, err)
 	require.Equal(t, `a: Alpha
 b: 32
 `, string(j))
 
 	m = vf.Map(`nested`, m)
 	j, err = yaml.Marshal(m)
-	require.Ok(t, err)
+	require.NoError(t, err)
 	require.Equal(t, `nested:
     a: Alpha
     b: 32
@@ -156,14 +156,14 @@ func (o obscureValue) HashCode() int {
 func TestMarshal_native(t *testing.T) {
 	m := vf.MutableValues(&testMarshaler{A: `hello`})
 	bs, err := yaml.Marshal(m)
-	require.Ok(t, err)
+	require.NoError(t, err)
 	require.Equal(t, "- A: hello\n", string(bs))
 }
 
 func TestMarshal_native_node(t *testing.T) {
 	m := vf.MutableValues(&marshalTestNode{})
 	bs, err := yaml.Marshal(m)
-	require.Ok(t, err)
+	require.NoError(t, err)
 	require.Equal(t, "- 23\n", string(bs))
 }
 
@@ -171,7 +171,7 @@ func TestMarshal_obscure(t *testing.T) {
 	m := vf.MutableValues(obscureValue(0))
 	_, err := yaml.Marshal(m)
 	require.NotNil(t, err)
-	require.Equal(t, `unable to marshal into value of type any`, err.Error())
+	require.Equal(t, `unable to marshal into value of type yaml_test.obscureValue`, err.Error())
 }
 
 func TestMarshal_fail(t *testing.T) {
